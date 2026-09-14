@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 设置视口参数，实现移动端响应式适配 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 网页标题，显示在浏览器标签页 -->
+    <title>个人作品集</title>
+    <style>
+        /* ========== 全局基础重置 ========== */
+        /* 清除所有元素默认内外边距，统一盒模型为border-box，避免布局错乱 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ========== 页面整体基础样式 ========== */
+        /* 设置全局字体、背景渐变、文字颜色和行高，奠定整体视觉风格 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(180deg, #e6f2ff 0%, #fafbfc 100%); /* 浅蓝到奶白纵向渐变背景 */
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 页面主容器：限制最大宽度、居中对齐、设置内边距，控制内容展示范围 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ========== 玻璃拟态通用卡片样式 ========== */
+        /* 通用类，所有需要玻璃质感的元素都可以复用，统一圆角、阴影、磨砂效果 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7); /* 半透明白色背景 */
+            backdrop-filter: blur(12px); /* 背景磨砂模糊效果 */
+            -webkit-backdrop-filter: blur(12px); /* 兼容webkit内核浏览器 */
+            border-radius: 18px; /* 大圆角 */
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); /* 柔和浅阴影 */
+            border: 1px solid rgba(255, 255, 255, 0.8); /* 白色细边框增强质感 */
+        }
+
+        /* ========== 顶部个人简介模块 ========== */
+        /* 个人简介区域整体布局，底部留白和导航区分隔 */
+        .profile-section {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* 左上角站点名称 */
+        .site-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 30px;
+        }
+
+        /* 个人信息主体：头像+文字 左右布局 */
+        .profile-main {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* 圆形头像样式：大小、边框、阴影 */
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            object-fit: cover;
+        }
+
+        /* 个人信息文字区 */
+        .profile-info {
+            flex: 1;
+        }
+
+        /* 个人昵称/ID，大字号加粗，视觉重点 */
+        .profile-name {
+            font-size: 48px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* 简介文案每行样式，浅灰色小字 */
+        .profile-desc {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        /* 联系按钮组：横向排列，设置间距 */
+        .contact-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        /* 单个联系按钮样式：胶囊造型、磨砂效果、hover交互 */
+        .contact-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ========== 分类导航栏 ========== */
+        /* 分类标签按钮容器，横向排列、自动换行，底部留白 */
+        .category-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        /* 单个分类按钮：胶囊造型、默认透明背景 */
+        .category-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: transparent;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 选中状态的分类按钮：浅蓝色填充 */
+        .category-btn.active {
+            background: #c9e2ff;
+            color: #2a6fb7;
+            font-weight: 500;
+        }
+
+        /* 未选中按钮hover效果 */
+        .category-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========== 作品卡片网格 ========== */
+        /* 响应式网格布局，自动适配列数，设置卡片间距 */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* 单个作品卡片：悬浮交互效果 */
+        .work-card {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* 鼠标悬浮卡片：上浮+阴影加深 */
+        .work-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 作品封面图：占满卡片宽度，顶部圆角 */
+        .work-cover {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 18px 18px 0 0;
+        }
+
+        /* 左下角浏览量标签：半透明深色背景 */
+        .work-views {
+            position: absolute;
+            top: 180px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 卡片底部文字信息区 */
+        .work-info {
+            padding: 16px 20px 20px;
+        }
+
+        /* 标题行：标题+数量标签 两端对齐 */
+        .work-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        /* 作品标题 */
+        .work-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        /* 作品数量标签 */
+        .work-count {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 作品简介小字 */
+        .work-desc {
+            font-size: 13px;
+            color: #888;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* 作品类型图标（视频/文字）：右上角圆形图标 */
+        .work-type-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* ========== 作品详情页 ========== */
+        /* 默认隐藏详情页，点击卡片后通过JS控制显示 */
+        .detail-page {
+            display: none;
+        }
+
+        /* 详情页顶部栏：返回按钮+分享按钮 两端对齐 */
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* 返回按钮样式 */
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+        }
+
+        /* 分享按钮样式 */
+        .share-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            background: white;
+        }
+
+        /* 详情页标题区 */
+        .detail-title-section {
+            margin-bottom: 30px;
+        }
+
+        /* 详情页大标题 */
+        .detail-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        /* 详情页副标题/说明，左侧带装饰线 */
+        .detail-subtitle {
+            font-size: 15px;
+            color: #777;
+            padding-left: 12px;
+            border-left: 3px solid #c9e2ff;
+        }
+
+        /* 右上角浏览量 */
+        .detail-views {
+            float: right;
+            color: #999;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* ========== 详情内容区 ========== */
+        /* 多列瀑布流布局，自动填充无空白 */
+        .detail-content {
+            column-count: 3;
+            column-gap: 20px;
+}
+
+
+        /* 调色对比图容器：上下两张图拼接 */
+        .image-compare {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .image-compare img {
+            width: 100%;
+            display: block;
+        }
+
+      /* 单张图片容器 */
+        .single-image {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            break-inside: avoid; /* 防止图片被分栏截断 */
+        }
+
+
+        .single-image img {
+            width: 100%;
+            display: block;
+        }
+
+      .single-image canvas {
+            width: 100%;
+            display: block;
+        }
+
+        
+
+        /* 文字作品内容卡片：占满整行，内边距充足 */
+        .text-content {
+            grid-column: 1 / -1;
+            padding: 30px;
+        }
+
+        .text-content h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .text-content p {
+            margin-bottom: 16px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        /* ========== 响应式适配（移动端） ========== */
+        /* 屏幕宽度小于768px时生效，适配手机显示 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            /* 个人简介改为上下居中布局 */
+            .profile-main {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact-buttons {
+                justify-content: center;
+            }
+
+            .profile-name {
+                font-size: 36px;
+            }
+
+            .detail-title {
+                font-size: 24px;
+            }
+
+            /* 作品网格改为单列 */
+    .works-grid {
+        grid-template-columns: 1fr;
+    }
+    .detail-content {
+        column-count: 1;
+    }
+
+
+    /* 视频合集移动端适配 */
+    .video-collection {
+        flex-direction: column;
+    }
+    .video-list {
+        width: 100%;
+        max-height: 280px;
+    }
+}
+
+
+        /* ========== 视频合集模块样式 ========== */
+            .video-collection {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        width: 100%;
+        column-span: all;
+        align-items: flex-start; /* 关键：顶部对齐，不再强制两边等高 */
+        min-height: 480px;
+    }
+
+        .video-list {
+        width: 300px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        max-height: 500px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+        .list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        }
+        .list-header h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        color: #222;
+        }
+        .add-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 20px;
+        background: #c9e2ff;
+        color: #2a6fb7;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        }
+        .add-btn:hover {
+        background: #b8d7ff;
+        }
+        .video-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        overflow-y: auto;
+        flex: 1;
+        }
+        .video-item {
+        display: flex;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+        position: relative;
+        border: 2px solid transparent;
+        }
+        .video-item:hover {
+        background: rgba(255, 255, 255, 0.8);
+        }
+        .video-item.active {
+        background: #ecf5ff;
+        border-color: #2a6fb7;
+        }
+        .video-item.dragging {
+        opacity: 0.5;
+        }
+        .video-cover {
+        width: 72px;
+        height: 42px;
+        object-fit: cover;
+        border-radius: 6px;
+        flex-shrink: 0;
+        }
+       .video-item-title {
+        color: #333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        /* autoprefixer: off */
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        /* autoprefixer: on */
+           line-clamp: 2; /* 标准原生属性，新版浏览器优先使用 */
+}
+.delete-btn {
+
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 18px;
+        height: 18px;
+        line-height: 16px;
+        text-align: center;
+        border: none;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        font-size: 12px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+        }
+        .video-item:hover .delete-btn {
+        opacity: 1;
+        }
+
+        .video-player-wrap {
+        flex: 1;
+        min-width: 0;
+        background: #000;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        position: relative;
+        height: fit-content; /* 高度随视频内容自适应 */
+    }
+
+
+    .main-player {
+        width: 100%;
+        height: auto; /* 高度随宽度按比例自动计算 */
+        display: block;
+        object-fit: contain; /* 保留完整画面 */
+    }
+
+    /* 添加视频弹窗 */
+    .modal-mask {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+/* 后面的 .modal-content、.modal-header 等样式都正常写在外面 */
+
+        .modal-mask.show {
+        display: flex;
+        }
+        .modal-content {
+        background: #fff;
+        border-radius: 16px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #eee;
+        }
+        .modal-header h4 {
+        margin: 0;
+        font-size: 16px;
+        color: #222;
+        }
+        .close-btn {
+        border: none;
+        background: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #999;
+        }
+        .modal-body {
+        padding: 20px;
+        }
+        .form-item {
+        margin-bottom: 16px;
+        }
+        .form-item label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: #666;
+        }
+        .form-item input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+        }
+        .form-item input:focus {
+        outline: none;
+        border-color: #2a6fb7;
+        }
+        .modal-footer {
+        padding: 12px 20px;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        }
+        .btn-cancel, .btn-confirm {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        }
+        .btn-cancel {
+        background: #f5f7fa;
+        color: #606266;
+        }
+        .btn-confirm {
+        background: #2a6fb7;
+        color: #fff;
+        }
+
+        /* 视频悬浮水印 */
+        .video-watermark {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 22px;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            z-index: 10;
+        }
+        /* 全站访问量样式 */
+        .site-views {
+            font-size: 14px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 6px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ========== 作品列表页（默认显示） ========== -->
+        <div class="list-page" id="listPage">
+            <!-- 顶部个人简介模块 -->
+            <div class="profile-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <div class="site-name" style="margin-bottom: 0;">我的作品集</div>
+                    <div class="site-views">👁 全站访问次数：<span id="siteViews">0</span>次</div>
+                </div>
+
+                
+                <div class="profile-main">
+                    <!-- 头像图片，替换src即可更换 -->
+                    <img src="林萤春雪.jpg" alt="头像" class="profile-avatar">
+                    
+                    <!-- 个人信息文字区 -->
+                    <div class="profile-info">
+                        <div class="profile-name">林萤春雪</div> <!-- 个人昵称/ID -->
+                        <p class="profile-desc">定向师范生，在大学的融媒体参与并负责过两年的拍摄活动</p> <!-- 身份标签 -->
+                        <p class="profile-desc">音乐、摄影、动画都有了解，纯爱好</p> <!-- 个人介绍 -->
+                        <p class="profile-desc">所有作品均有版权，严禁盗图商用</p> <!-- 版权声明 -->
+                        
+                        <!-- 联系按钮组 -->
+                        <div class="contact-buttons">
+                            <!-- <button class="contact-btn">📞 138-xxxx-xxxx</button> -->
+                            <!-- <button class="contact-btn">💬 WeChat</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分类导航栏 -->
+            <div class="category-nav">
+                <button class="category-btn active" data-type="all">全部</button>
+                <button class="category-btn" data-type="image">图片作品</button>
+                <button class="category-btn" data-type="video">视频作品</button>
+            </div>
+
+            <!-- 作品卡片网格容器，内容由JS动态渲染 -->
+            <div class="works-grid" id="worksGrid"></div>
+        </div>
+
+        <!-- ========== 作品详情页（默认隐藏） ========== -->
+        <div class="detail-page" id="detailPage">
+            <!-- 顶部操作栏：返回+分享 -->
+            <div class="detail-header">
+                <button class="back-btn" id="backBtn">
+                    <span>←</span> BACK
+                </button>
+                <!-- <button class="share-btn">
+                    <span>⤴</span> 分享作品 -->
+                </button>
+            </div>
+
+            <!-- 标题信息区 -->
+            <div class="detail-title-section">
+                <span class="detail-views" id="detailViews">👁 1023</span>
+                <h1 class="detail-title" id="detailTitle">作品标题</h1>
+                <p class="detail-subtitle" id="detailSubtitle">作品说明文字</p>
+            </div>
+
+            <!-- 详情内容容器，内容由JS动态渲染 -->
+            <div class="detail-content" id="detailContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 浏览量本地存储工具 ==========
+        // 全站访问量：读取
+        function getSiteViews() {
+            return parseInt(localStorage.getItem('site_views')) || 0;
+        }
+        // 全站访问量：+1并保存
+        function addSiteViews() {
+            const views = getSiteViews() + 1;
+            localStorage.setItem('site_views', views);
+            return views;
+        }
+
+        // 单个作品浏览量：读取
+        function getWorkViews(workId) {
+            const viewsMap = JSON.parse(localStorage.getItem('work_views') || '{}');
+            return viewsMap[workId] ?? null;
+        }
+        // 单个作品浏览量：+1并保存（首次用默认值初始化）
+        function addWorkViews(workId, defaultViews) {
+            const viewsMap = JSON.parse(localStorage.getItem('work_views') || '{}');
+            viewsMap[workId] = (viewsMap[workId] ?? defaultViews) + 1;
+            localStorage.setItem('work_views', JSON.stringify(viewsMap));
+            return viewsMap[workId];
+        }
+        // 获取作品显示用的浏览量（优先读本地存储）
+        function getWorkDisplayViews(work) {
+            const stored = getWorkViews(work.id);
+            return stored !== null ? stored : work.views;
+        }
+
+   
+
+        // ========== 作品数据配置区 ==========
+        // 所有作品内容都存在这个数组里，可自行添加、修改、删除
+        const works = [
+            {
+                id: 1, // 作品唯一ID
+                title: '去爬山',
+                desc: '吹自由的风',
+                type: 'image',
+                count: 73,
+                views: 0,
+                cover: '照片/去爬山/P1089421.jpeg',
+                compare: false,
+                images: [ // 普通图集模式，直接放图片链接即可
+                    '照片/去爬山/P1089212.jpeg',
+                    '照片/去爬山/P1089213.jpeg',
+                    '照片/去爬山/P1089405.jpeg',
+                    '照片/去爬山/P1089407.jpeg',
+                    '照片/去爬山/P1089408.jpeg',
+                    '照片/去爬山/P1089409.jpeg',
+                    '照片/去爬山/P1089421.jpeg',
+                    '照片/去爬山/P1089434.jpeg'
+                ]
+            },
+            {
+                id: 2,
+                title: '花花草草',
+                desc: '捕捉花叶与光影',
+                type: 'image',
+                count: 73,
+                views: 0,
+                cover: '照片/花花草草/P1075888.jpeg',
+                compare: false,
+                images: [ // 普通图集模式，直接放图片链接即可
+                    '照片/花花草草/风景4(1).jpeg',
+                    '照片/花花草草/P1074390.jpeg0',
+                    '照片/花花草草/P1075876.jpeg',
+                    '照片/花花草草/P1075877.jpeg',
+                    '照片/花花草草/P1075878.jpeg',
+                    '照片/花花草草/P1075879.jpeg',
+                    '照片/花花草草/P1075888.jpeg',
+                    '照片/花花草草/P1075890.jpeg',
+                    '照片/花花草草/P1077549_1.jpeg',
+                    '照片/花花草草/P1077645.jpeg',
+                    '照片/花花草草/P1077649.jpeg',
+                    '照片/花花草草/P1077653.jpeg',
+                    '照片/花花草草/P1077655.jpeg',
+                    '照片/花花草草/P1077658.jpeg',
+                    '照片/花花草草/P1077678.jpeg',
+                    '照片/花花草草/P1077680.jpeg',
+                    '照片/花花草草/P1077681.jpeg',
+                    '照片/花花草草/P1077682.jpeg',
+                    '照片/花花草草/P1077695.jpeg',
+                    '照片/花花草草/P1077704.jpeg',
+                    '照片/花花草草/P1077720.jpeg',
+                    '照片/花花草草/P1077721.jpeg',
+                    '照片/花花草草/P1078640.jpeg',
+                    '照片/花花草草/P1078790.jpeg',
+                    '照片/花花草草/P1078794.jpeg',
+                    '照片/花花草草/P1078797.jpeg',
+                    '照片/花花草草/P1118790.jpeg',
+                    '照片/花花草草/P1118792.jpeg',
+                    '照片/花花草草/P1118796.jpeg',
+                    '照片/花花草草/P1118800.jpeg',
+                    '照片/花花草草/P1118803.jpeg',
+                    '照片/花花草草/P1118804.jpeg',
+                    '照片/花花草草/P1118808.jpeg',
+                    '照片/花花草草/P1118809.jpeg'
+                ]
+            },
+            {
+                id: 3,
+                title: '街拍',
+                desc: '在黄昏里收集人间碎片',
+                type: 'image',
+                count: 40,
+                views: 0,
+                cover: '照片/街拍/P1118880.jpeg',
+                compare: false,
+                images: [
+                    '照片/街拍/小吃(1).jpeg',
+                    '照片/街拍/P1074345.jpeg',
+                    '照片/街拍/P1074347.jpeg',
+                    '照片/街拍/P1074603.jpeg',
+                    '照片/街拍/P1075915-已增强-NR.jpeg',
+                    '照片/街拍/P1075926-已增强-NR.jpeg',
+                    '照片/街拍/P1075931-已增强-NR.jpeg',
+                    '照片/街拍/P1076898.jpeg',
+                    '照片/街拍/P1077855.jpeg',
+                    '照片/街拍/P1077856_1.jpeg',
+                    '照片/街拍/P1077857_1.jpeg',
+                    '照片/街拍/P1077859_1.jpeg',
+                    '照片/街拍/P1078653.jpeg',
+                    '照片/街拍/P1078654.jpeg',
+                    '照片/街拍/P1118880.jpeg',
+                    '照片/街拍/P1118882-已增强-NR.jpeg',
+                    '照片/街拍/P1118886-已增强-NR.jpeg',
+                    '照片/街拍/P1118887-已增强-NR.jpeg',
+                    '照片/街拍/P1118888-已增强-NR.jpeg',
+                    '照片/街拍/P1118889-已增强-NR.jpeg'
+                ]
+            },
+            {
+                id: 4,
+                title: '旅游',
+                desc: '收藏旅途里不期而遇的美好',
+                type: 'image',
+                count: 40,
+                views: 0,
+                cover: '照片/旅游/P1076188_1.jpeg',
+                compare: false,
+                images: [
+                    '照片/旅游/39241cfab54e027d95108653f0ca255.jpg',
+                    '照片/旅游/67780fc8b616990a57deb03171861cc.jpg',
+                    '照片/旅游/753671242a79dfa13369d91f61c2c5e.jpg',
+                    '照片/旅游/金山亭.jpeg',
+                    '照片/旅游/如意洲.jpeg',
+                    '照照片/旅游/文林狮子圆.jpeg',
+                    '照片/旅游/DSC_0169.jpeg',
+                    '照片/旅游/P1074394.jpeg',
+                    '照片/旅游/P1074404.jpeg',
+                    '照片/旅游/P1076188_1.jpeg',
+                    '照片/旅游/P1076194_1.jpeg',
+                    '照片/旅游/P1076196_1.jpeg',
+                    '照片/旅游/P1077527.jpeg',
+                    '照片/旅游/P1077543.jpeg',
+                    '照片/旅游/P1077933.jpeg',
+                    '照片/旅游/P1077954.jpeg',
+                    '照片/旅游/P1077957.jpeg',
+                    '照片/旅游/P1077986.jpeg',
+                    '照片/旅游/P1078013.jpeg',
+                    '照片/旅游/P1078034.jpeg',
+                    '照片/旅游/P1078039.jpeg',
+                    '照片/旅游/P1078061.jpeg',
+                    '照片/旅游/P1078110.jpeg',
+                    '照片/旅游/P1078114.jpeg',
+                    '照片/旅游/P1078115.jpeg',
+                    '照片/旅游/P1078121.jpeg',
+                    '照片/旅游/P1078125.jpeg',
+                    '照片/旅游/P1078132.jpeg'
+
+                ]
+            },
+           {
+                id: 5,
+                title: '活动拍剪',
+                desc: '定格现场鲜活的光影瞬间',
+                type: 'video',
+                count: 12,
+                views: 0,
+                cover: '视频/活动快剪/东园林.jpg',
+                videos: [ // 视频合集数组，可自由添加
+                    {
+                        title: '记者节暖场视频',
+                        src: '视频/活动快剪/2024记者节暖场视频~1.mp4',
+                        cover: '视频/活动快剪/记者节.jpg'
+                    },
+                    {
+                        title: '2025年终总结',
+                        src: '视频/活动快剪/2025年终总结.2mp4~1.mp4',
+                        cover: '视频/活动快剪/【松下S52】三年里都拍了哪些.jpg'
+                    },
+
+                    {
+                        title: '东园林小学优制体育课',
+                        src: '视频/活动快剪/2025.5.19东园林小学优质体育课~1.mp4',
+                        cover: '视频/活动快剪/东园林.jpg'
+                    },
+                    {
+                         title: '理想小学开学.mp4',
+                        src: '视频/活动快剪/理想小学开学~1.mp4',
+                        cover: '视频/活动快剪/理想小学开学.jpg'
+                    },
+                    {
+                        title: '礼山溪',
+                        src: '视频/活动快剪/礼山溪~1.mp4',
+                        cover: '视频/活动快剪/礼山溪.jpg'
+                    },
+                     {
+                        title: '2024运动会',
+                        src: '视频/活动快剪/2024运动会加领导~1.mp4',
+                        cover: '视频/活动快剪/运动会.jpg'
+                    },
+                ]
+},
+
+            // {
+            //     id: 6,
+            //     title: '设计随笔集',
+            //     desc: '关于设计与生活的思考文字合集',
+            //     type: 'text',
+            //     count: 18,
+            //     views: 420,
+            //     cover: 'https://picsum.photos/id/1005/600/400',
+            //     content: ` // 文字作品正文内容，支持HTML标签排版
+            //         <h3>关于设计的本质</h3>
+            //         <p>设计不是装饰，而是解决问题的方式。好的设计应当隐形于体验，让用户专注于内容本身，而非界面的形式。</p>
+            //         <p>在日常的设计实践中，我们常常会陷入对视觉细节的过度追求，却忽略了用户最核心的需求。回归本质，才是设计的初心。</p>
+            //         <h3>作品集的意义</h3>
+            //         <p>作品集是创作者的名片，它承载的不仅是作品，更是思考的轨迹。每一个项目背后的取舍、迭代、反思，都比最终的呈现更有价值。</p>
+            //     `
+            // },
+            {
+                id: 7,
+                title: 'PV',
+                desc: '用画面叙事，以旋律传递情绪',
+                type: 'video',
+                count: 12,
+                views: 0,
+                cover: '视频/PV/【毕业季】Whiteeeen《卒業ソング》中文版——《毕业之歌》送给每一位即将毕业的你.jpg',
+                videos: [
+                   {
+                        title: '毕业之歌',
+                        src: '视频/PV/毕业之歌.mp4',
+                        cover: '视频/PV/【毕业季】Whiteeeen《卒業ソング》中文版——《毕业之歌》送给每一位即将毕业的你.jpg'
+                    },
+                     {
+                        title: '惊鹊.mp4',
+                        src: '视频/PV/惊鹊~1.mp4',
+                        cover: '视频/PV/惊鹊 (0-01-26-00).jpg'
+                    },
+                    {
+                        title: '不问别离毕业季.mp4',
+                        src: '视频/PV/不问别离毕业季~1.mp4',
+                        cover: '视频/PV/不问别离毕业季重制版.jpg'
+                    },
+                    {
+                        title: '典狱司红白喜',
+                        src: '视频/PV/典狱司红白喜_1~1.mp4',
+                        cover: '视频/PV/典狱司红白喜封面.jpg'
+                    },]
+            },
+            {
+                id: 8,
+                title: '混剪',
+                desc: '在镜头重组里续写故事与氛围感',
+                type: 'video',
+                count: 12,
+                views: 0,
+                cover: '视频/混剪/悬溺一响，哥哥登场.jpg',
+                videos: [
+                   {
+                        title: '马-霸王别姬',
+                        src: '视频/混剪/马-霸王别姬~1.mp4',
+                        cover: '视频/混剪/“我的白马儿啊 你慢些跑啊”【马福禄寿霸王别姬混剪】.jpg'
+                    },
+                     {
+                        title: '笼-霸王别姬.mp4',
+                        src: '视频/混剪/笼~1.mp4',
+                        cover: '视频/混剪/【张国荣笼】.jpg'
+                    },
+                    {
+                        title: '嗵嗵霸王别姬',
+                        src: '视频/混剪/嗵嗵霸王别姬~1.mp4',
+                        cover: '视频/混剪/“为什么，为什么，遗憾那么多”【嗵嗵霸王别姬】.jpg'
+                    },
+                    {
+                        title: '我用什么把你留住霸王别姬                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ',
+                        src: '视频/混剪/我用什么把你留住霸王别姬_2~1.mp4',
+                        cover: '视频/混剪/我用什么把你留住霸王别姬封面.jpg'
+                    },
+                    {
+                        title: '戏文说-霸王别姬                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ',
+                        src: '视频/混剪/戏文说-霸王别姬~1.mp4',
+                        cover: '视频/混剪/“初听只当戏 再听已懂曲中意”【戏文说霸王别姬】.jpg'
+                    },
+                    {
+                        title: '玄鸟-霸王别姬                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ',
+                        src: '视频/混剪/玄鸟-霸王别姬~1.mp4',
+                        cover: '视频/混剪/“你是我 绝望中 生之向往”【玄鸟-霸王别姬】.jpg'
+                    },
+                     {
+                        title: '悬溺霸王别姬                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ',
+                        src: '视频/混剪/悬溺霸王别姬春光乍泄~1.mp4',
+                        cover: '视频/混剪/悬溺一响，哥哥登场.jpg'
+                    },
+                ]
+            },
+             {
+                id: 9,
+                title: '游戏剪辑',
+                desc: '游戏趣味时刻',
+                type: 'video',
+                count: 12,
+                views: 0,
+                cover: '视频/游戏剪辑/★P★V★T★进★行★曲★.jpg',
+                videos: [
+                   {
+                        title: '这是谁家鸡猎开罐头了',
+                        src: '视频/游戏剪辑/这是谁家鸡猎开罐头了~1.mp4',
+                        cover: '视频/游戏剪辑/这是谁家猎鸡开罐头了.jpg'
+                    },
+                     {
+                        title: 'PVT进行曲',
+                        src: '视频/游戏剪辑/PVT进行曲~1.mp4',
+                        cover: '视频/游戏剪辑/★P★V★T★进★行★曲★.jpg'
+                    },
+                    {
+                        title: '星际不秒曲',
+                        src: '视频/游戏剪辑/星际不秒曲~1.mp4',
+                        cover: '视频/游戏剪辑/⚡️神⚡️族⚡️不⚡️妙⚡️曲⚡️.jpg'
+                    },
+                    {
+                        title: '小子，一波',
+                        src: '视频/游戏剪辑/小子，一波~1.mp4',
+                        cover: '视频/游戏剪辑/小子，一波！.jpg'
+                    },
+                    {
+                        title: '为什么受伤的总是我',
+                        src: '视频/游戏剪辑/为什么受伤的总是我~1.mp4',
+                        cover: '视频/游戏剪辑/为什么受伤的总是我.jpg'
+                    },
+                    {
+                        title: '哦吼吼吼吼吼闪电大人',
+                        src: '视频/游戏剪辑/哦吼吼吼吼吼闪电大人~1.mp4',
+                        cover: '视频/游戏剪辑/⚡哦吼吼吼吼吼闪电大人⚡.jpg'
+                    },
+                    {
+                        title: '那一天的鸡猎~不再鸡肋~',
+                        src: '视频/游戏剪辑/那一天的鸡猎~不再鸡肋~~1.mp4',
+                        cover: '视频/游戏剪辑/那一天的鸡猎~不再鸡肋~.jpg'
+                    },
+                     {
+                        title: '流水的鸡猎，铁打的',
+                        src: '视频/游戏剪辑/流水的鸡猎，铁打的~1.mp4',
+                        cover: '视频/游戏剪辑/流水的鸡猎，铁打的——.jpg'
+                    },
+                    {
+                        title: '今天的鸡是维鸡',
+                        src: '视频/游戏剪辑/今天的鸡是维鸡~1.mp4',
+                        cover: '视频/游戏剪辑/今天的鸡是维鸡.jpg'
+                    },
+                    {
+                        title: '该喂鸡吃球了',
+                        src: '视频/游戏剪辑/该喂鸡吃球了~1.mp4',
+                        cover: '视频/游戏剪辑/该喂鸡吃球了.jpg'
+                    },
+                    {
+                        title: '舰队真快乐',
+                        src: '视频/游戏剪辑/2025.6.29(舰队真快乐)~1.mp4',
+                        cover: '视频/游戏剪辑/局势一片大好^_^.jpg'
+                    },
+                ]
+            },
+        ];
+
+        // ========== 获取页面DOM元素 ==========
+        const worksGrid = document.getElementById('worksGrid'); // 作品网格容器
+        const listPage = document.getElementById('listPage'); // 列表页
+        const detailPage = document.getElementById('detailPage'); // 详情页
+        const backBtn = document.getElementById('backBtn'); // 返回按钮
+        const categoryBtns = document.querySelectorAll('.category-btn'); // 所有分类按钮
+
+        // ========== 渲染作品列表函数 ==========
+        // 根据传入的分类类型，筛选并渲染对应作品卡片
+        function renderWorks(filterType = 'all') {
+            worksGrid.innerHTML = ''; // 清空现有内容
+            // 筛选作品：all显示全部，其他显示对应类型
+            const filteredWorks = filterType === 'all' 
+                ? works 
+                : works.filter(work => work.type === filterType);
+
+            // 遍历作品数组，逐个生成卡片
+            filteredWorks.forEach(work => {
+                const card = document.createElement('div');
+                card.className = 'work-card glass-card';
+                card.dataset.id = work.id; // 绑定作品ID
+
+                // 根据作品类型显示对应右上角图标
+                let typeIcon = '';
+                if (work.type === 'video') typeIcon = '▶';
+                else if (work.type === 'text') typeIcon = '📝';
+
+                // 拼接卡片HTML结构
+                card.innerHTML = `
+                    <img src="${work.cover}" alt="${work.title}" class="work-cover">
+                    ${typeIcon ? `<div class="work-type-icon">${typeIcon}</div>` : ''}
+                   <div class="work-views">👁 ${getWorkDisplayViews(work)}</div>
+                    <div class="work-info">
+                        <div class="work-title-row">
+                            <span class="work-title">${work.title}</span>
+                            <span class="work-count">${work.count}</span>
+                        </div>
+                        <p class="work-desc">${work.desc}</p>
+                    </div>
+                `;
+
+                // 给卡片添加点击事件，点击打开对应详情页
+                card.addEventListener('click', () => openDetail(work.id));
+                worksGrid.appendChild(card); // 将卡片加入网格
+            });
+        }
+
+                // ========== 打开作品详情函数 ==========
+            // 根据作品ID，渲染并跳转到详情页
+            function openDetail(id) {
+                // 查找对应ID的作品数据
+                const work = works.find(w => w.id === id);
+                if (!work) return;
+                // 进入详情页，作品浏览量+1
+                const newViews = addWorkViews(work.id, work.views);
+                // 刷新列表页的浏览量（返回时可见更新）
+                renderWorks(document.querySelector('.category-btn.active').dataset.type);
+                
+                // 填充标题、副标题、浏览量
+                document.getElementById('detailTitle').textContent = work.title;
+                document.getElementById('detailSubtitle').textContent = work.desc;
+                document.getElementById('detailViews').textContent = `👁 ${newViews}`;
+
+
+            const detailContent = document.getElementById('detailContent');
+            detailContent.innerHTML = ''; // 清空现有内容
+
+            // 根据作品类型渲染不同的内容
+            if (work.type === 'image') {
+                // 图片类型：对比模式 / 普通图集
+                if (work.compare) {
+                    // 对比模式：上下拼接原图和成片
+                    work.images.forEach(imgPair => {
+                        const compareBox = document.createElement('div');
+                        compareBox.className = 'image-compare glass-card';
+                        compareBox.innerHTML = `
+                            <img src="${imgPair.before}" alt="原图">
+                            <img src="${imgPair.after}" alt="调色后">
+                        `;
+                        detailContent.appendChild(compareBox);
+                    });
+                } else {
+                    // 普通图集：Canvas硬水印 + 防右键保存
+                    work.images.forEach(imgSrc => {
+                        const imgBox = document.createElement('div');
+                        imgBox.className = 'single-image glass-card';
+                        
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        img.onload = function() {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            // 绘制原图
+                            ctx.drawImage(img, 0, 0);
+                           // 绘制水印（右上角横排）
+                            ctx.font = 'bold 20px sans-serif';
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                            ctx.save();
+                            ctx.textAlign = 'right';
+                            ctx.fillText('林萤春雪', canvas.width - 20, 35);
+                            ctx.restore();
+                        };
+                        img.src = imgSrc;
+
+                        // 禁用右键菜单、禁止拖拽保存
+                        canvas.addEventListener('contextmenu', e => e.preventDefault());
+                        canvas.draggable = false;
+                        
+                        imgBox.appendChild(canvas);
+                        detailContent.appendChild(imgBox);
+                    });
+                    }
+                } else if (work.type === 'video') {
+        // 视频类型：渲染完整视频合集模块
+        const collectionBox = document.createElement('div');
+        collectionBox.className = 'video-collection';
+        collectionBox.innerHTML = `
+        <!-- 左侧视频列表 -->
+        <div class="video-list">
+            <div class="list-header">
+            <h3>视频合集</h3>
+            <button id="addVideoBtn" class="add-btn">+ 添加视频</button>
+            </div>
+            <ul id="videoListContainer" class="video-items"></ul>
+        </div>
+        <!-- 右侧主播放器 -->
+            <div class="video-player-wrap">
+         <video id="mainVideo" controls class="main-player" poster="${work.cover}" controlsList="nodownload  noremoteplayback" disablePictureInPicture>
+        您的浏览器不支持 video 标签。
+    </video>
+            <div class="video-watermark">林萤春雪</div>
+            <div class="video-title-bar" id="currentVideoTitle">请选择视频播放</div>
+        </div>
+        `;
+        detailContent.appendChild(collectionBox);
+
+        // 添加视频弹窗
+        const modalHtml = `
+        <div id="addModal" class="modal-mask">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4>添加新视频</h4>
+                <button class="close-btn" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-item">
+                <label>视频标题</label>
+                <input type="text" id="videoTitleInput" placeholder="请输入视频标题">
+                </div>
+                <div class="form-item">
+                <label>视频播放链接</label>
+                <input type="text" id="videoSrcInput" placeholder="请输入MP4视频地址">
+                </div>
+                <div class="form-item">
+                <label>封面图链接</label>
+                <input type="text" id="videoCoverInput" placeholder="请输入封面图片地址">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelAdd">取消</button>
+                <button class="btn-confirm" id="confirmAdd">确认添加</button>
+            </div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // ========== 合集交互逻辑初始化 ==========
+    let videoList = [...work.videos]; // 读取作品的视频合集数据
+    let currentIndex = -1;
+    let dragIndex = -1;
+
+    const listContainer = document.getElementById('videoListContainer');
+    const mainVideo = document.getElementById('mainVideo');
+    const currentTitle = document.getElementById('currentVideoTitle');
+    const addBtn = document.getElementById('addVideoBtn');
+    const modal = document.getElementById('addModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelAdd = document.getElementById('cancelAdd');
+    const confirmAdd = document.getElementById('confirmAdd');
+    const titleInput = document.getElementById('videoTitleInput');
+    const srcInput = document.getElementById('videoSrcInput');
+    const coverInput = document.getElementById('videoCoverInput');
+
+    // 渲染列表
+    function renderList() {
+      listContainer.innerHTML = '';
+      videoList.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = 'video-item' + (index === currentIndex ? ' active' : '');
+        li.draggable = true;
+        li.dataset.index = index;
+        li.innerHTML = `
+          <img src="${item.cover}" alt="${item.title}" class="video-cover">
+          <span class="video-item-title">${item.title}</span>
+          <button class="delete-btn" data-index="${index}">×</button>
+        `;
+        // 点击切换
+        li.addEventListener('click', (e) => {
+          if (e.target.classList.contains('delete-btn')) return;
+          playVideo(index);
+        });
+        // 删除
+        li.querySelector('.delete-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (confirm('确定删除该视频吗？')) {
+            videoList.splice(index, 1);
+            if (index === currentIndex) {
+              currentIndex = -1;
+              mainVideo.src = '';
+              currentTitle.textContent = '请选择视频播放';
+              if (videoList.length > 0) playVideo(0);
+              // 禁用视频右键菜单
+            } else if (index < currentIndex) currentIndex--;
+            renderList();
+          }
+        });
+        // 拖拽排序
+        li.addEventListener('dragstart', () => {
+          dragIndex = index;
+          li.classList.add('dragging');
+        });
+        li.addEventListener('dragend', () => {
+          li.classList.remove('dragging');
+          dragIndex = -1;
+        });
+        li.addEventListener('dragover', (e) => e.preventDefault());
+        li.addEventListener('drop', (e) => {
+          e.preventDefault();
+          if (dragIndex === -1 || dragIndex === index) return;
+          const temp = videoList[dragIndex];
+          videoList.splice(dragIndex, 1);
+          videoList.splice(index, 0, temp);
+          if (currentIndex === dragIndex) currentIndex = index;
+          else if (dragIndex < currentIndex && index >= currentIndex) currentIndex--;
+          else if (dragIndex > currentIndex && index <= currentIndex) currentIndex++;
+          renderList();
+        });
+        listContainer.appendChild(li);
+      });
+    }
+
+    // 播放视频
+    function playVideo(index) {
+      if (index < 0 || index >= videoList.length) return;
+      currentIndex = index;
+      const video = videoList[index];
+      mainVideo.src = video.src;
+      currentTitle.textContent = video.title;
+      mainVideo.play();
+      renderList();
+    }
+
+    // 弹窗控制
+    function openModal() { modal.classList.add('show'); }
+    function closeModalFn() { modal.classList.remove('show'); }
+
+    addBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModalFn);
+    cancelAdd.addEventListener('click', closeModalFn);
+    confirmAdd.addEventListener('click', () => {
+      const title = titleInput.value.trim();
+      const src = srcInput.value.trim();
+      const cover = coverInput.value.trim() || work.cover;
+      if (!title || !src) {
+        alert('请填写视频标题和播放链接');
+        return;
+      }
+      videoList.push({ title, src, cover });
+      renderList();
+      closeModalFn();
+      titleInput.value = '';
+      srcInput.value = '';
+      coverInput.value = '';
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModalFn();
+    });
+
+    // 初始化：渲染列表，默认播放第一个
+    renderList();
+    if (videoList.length > 0) playVideo(0);
+
+    // 禁用视频右键菜单
+    mainVideo.addEventListener('contextmenu', e => e.preventDefault());
+
+// 返回列表页时清理弹窗
+
+    // 返回列表页时清理弹窗
+    document.getElementById('backBtn').addEventListener('click', () => {
+      const modal = document.getElementById('addModal');
+      if (modal) modal.remove();
+    }, { once: true });
+}
+
+
+            // 切换页面显示：隐藏列表，显示详情
+            listPage.style.display = 'none';
+            detailPage.style.display = 'block';
+            window.scrollTo(0, 0); // 滚动到页面顶部
+        }
+
+        // ========== 返回列表页事件 ==========
+       // ========== 返回列表页事件 ==========
+backBtn.addEventListener('click', () => {
+    // 停止并清空视频
+    const mainVideo = document.getElementById('mainVideo');
+    if (mainVideo) {
+        mainVideo.pause();
+        mainVideo.src = '';
+    }
+    detailPage.style.display = 'none'; // 隐藏详情页
+    listPage.style.display = 'block'; // 显示列表页
+});
+
+
+        // ========== 分类筛选功能 ==========
+        // 给每个分类按钮绑定点击事件
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 先移除所有按钮的选中状态
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                // 给当前点击的按钮添加选中状态
+                btn.classList.add('active');
+                // 重新渲染对应分类的作品
+                renderWorks(btn.dataset.type);
+            });
+        });
+
+       // ========== 页面初始化 ==========
+        // 全站访问量+1并显示
+        document.getElementById('siteViews').textContent = addSiteViews();
+        // 页面加载完成后，默认渲染全部作品
+        renderWorks();
+
+       
+        // 全局屏蔽所有媒体的右键菜单
+        document.addEventListener('contextmenu', e => {
+            if(e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO' || e.target.tagName === 'CANVAS') {
+                e.preventDefault();
+            }
+        });
+
+        // 屏蔽 Ctrl+S 保存网页快捷键
+        document.addEventListener('keydown', e => {
+            if((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
