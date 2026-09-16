@@ -398,49 +398,7 @@
             line-height: 1.8;
         }
 
-        /* ========== 响应式适配（移动端） ========== */
-        /* 屏幕宽度小于768px时生效，适配手机显示 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 16px;
-            }
-
-            /* 个人简介改为上下居中布局 */
-            .profile-main {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .contact-buttons {
-                justify-content: center;
-            }
-
-            .profile-name {
-                font-size: 36px;
-            }
-
-            .detail-title {
-                font-size: 24px;
-            }
-
-            /* 作品网格改为单列 */
-    .works-grid {
-        grid-template-columns: 1fr;
-    }
-    .detail-content {
-        column-count: 1;
-    }
-
-
-    /* 视频合集移动端适配 */
-    .video-collection {
-        flex-direction: column;
-    }
-    .video-list {
-        width: 100%;
-        max-height: 280px;
-    }
-}
+ 
 
 
         /* ========== 视频合集模块样式 ========== */
@@ -583,6 +541,15 @@
         object-fit: contain; /* 保留完整画面 */
     }
 
+    /* 视频标题栏基础样式 */
+    .video-title-bar {
+        padding: 10px 16px;
+        color: #fff;
+        font-size: 15px;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+
     /* 添加视频弹窗 */
     .modal-mask {
         position: fixed;
@@ -697,7 +664,72 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
+       /* ========== 响应式适配（移动端） ========== */
+        /* 屏幕宽度小于768px时生效，适配手机显示 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
 
+            /* 个人简介改为上下居中布局 */
+            .profile-main {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact-buttons {
+                justify-content: center;
+            }
+
+            .profile-name {
+                font-size: 36px;
+            }
+
+            .detail-title {
+                font-size: 24px;
+            }
+
+                /* 作品网格改为单列 */
+        .works-grid {
+            grid-template-columns: 1fr;
+        }
+        .detail-content {
+            column-count: 1;
+        }
+
+
+      /* 视频合集移动端适配：上下排列 */
+        .video-collection {
+            flex-direction: column;
+            width: 100%;
+            min-height: auto;
+            gap: 16px;
+        }
+        .video-list {
+            width: 100%;
+            max-height: 220px;
+        }
+        .video-player-wrap {
+            width: 100%;
+            flex: none;
+        }
+        .main-player {
+            width: 100%;
+            height: auto;
+        }
+        /* 移动端水印缩小 */
+        .video-watermark {
+            top: 12px;
+            right: 12px;
+            font-size: 16px;
+        }
+        /* 移动端视频标题栏 */
+        .video-title-bar {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+    }
 
     </style>
 </head>
